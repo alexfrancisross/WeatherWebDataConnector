@@ -8,24 +8,24 @@
 <meta http-equiv="Cache-Control" content="no-store" />
 <head>
 
- <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="description" content="">
-    <meta name="author" content="">
+<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<meta name="description" content="">
+	<meta name="author" content="">
 	
 	<!-- Title Core CSS -->
-    <title>Weather Web Data Connector</title>
+	<title>Weather Web Data Connector</title>
 
-    <!-- Bootstrap Core CSS -->
-    <link href="css/bootstrap.min.css" rel="stylesheet">
+	<!-- Bootstrap Core CSS -->
+	<link href="css/bootstrap.min.css" rel="stylesheet">
 
-    <!-- Custom CSS -->
-    <link href="css/stylish-portfolio.css" rel="stylesheet">
+	<!-- Custom CSS -->
+	<link href="css/stylish-portfolio.css" rel="stylesheet">
 
-    <!-- Custom Fonts -->
-    <link href="font-awesome/css/font-awesome.min.css" rel="stylesheet" type="text/css">
-    <link href="http://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,700,300italic,400italic,700italic" rel="stylesheet" type="text/css">
+	<!-- Custom Fonts -->
+	<link href="font-awesome/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+	<link href="http://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,700,300italic,400italic,700italic" rel="stylesheet" type="text/css">
 
 <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js" type="text/javascript"></script>
 <script type="text/javascript">
@@ -35,32 +35,32 @@ var CHUNKSIZE=5;  //Number of cities to get data for before calling back to Tabl
 
 function init() 
 {
-    tableau.initCallback();
+	tableau.initCallback();
 }
 
 function shutdown() {
-    tableau.shutdownCallback();
+	tableau.shutdownCallback();
 }
 
 
 function getColumnHeaders()
 {
-     //setup field names and types to store weather data
-    var fieldNames = ['COUNTRY','CITY ID','CITY','DAYTEMP','MINTEMP','MAXTEMP','NIGHTTEMP','EVETEMP','MORNTEMP','PRESSURE','HUMIDITY','DATE','MAIN','DESCRIPTION','ICON','SPEED','DEGREES','CLOUD','LAT','LON'];
-    var fieldTypes = ['string','float','string','float','float','float','float','float','float','float','float','date','string','string','string','float','float','float','float','float'];
-    tableau.headersCallback(fieldNames, fieldTypes);
+	//setup field names and types to store weather data
+	var fieldNames = ['COUNTRY','CITY ID','CITY','DAYTEMP','MINTEMP','MAXTEMP','NIGHTTEMP','EVETEMP','MORNTEMP','PRESSURE','HUMIDITY','DATE','MAIN','DESCRIPTION','ICON','SPEED','DEGREES','CLOUD','LAT','LON'];
+	var fieldTypes = ['string','float','string','float','float','float','float','float','float','float','float','date','string','string','string','float','float','float','float','float'];
+	tableau.headersCallback(fieldNames, fieldTypes);
 }
 
 function getTableData(lastRecordNumber) {
 
-  if (!tableau) {
-    alert("weatherwebconnect getColumnHeaders- tableau NOT defined!");
-    return;
-    }
-  
-  tableau.log("weatherwebconnect - getTableData connectionData=" + tableau.connectionData);
-  tableau.log("weatherwebconnect - getTableData lastRecordNumber=" + lastRecordNumber);
-  
+	if (!tableau) {
+		alert("weatherwebconnect getColumnHeaders- tableau NOT defined!");
+		return;
+		}
+
+	tableau.log("weatherwebconnect - getTableData connectionData=" + tableau.connectionData);
+	tableau.log("weatherwebconnect - getTableData lastRecordNumber=" + lastRecordNumber);
+
 	//country id selected by user
 	var country = tableau.connectionData;
 
@@ -85,13 +85,13 @@ function getTableData(lastRecordNumber) {
 		}		
 	
 	//parse lastRecordNumer as Integer as Tableau stores this as a string
-    lastRecordNumber = Number(lastRecordNumber); 
+	lastRecordNumber = Number(lastRecordNumber); 
 	
 	// Return if lastRecordNumber is greater than or equal to the size of cityids list
 	if (lastRecordNumber>=cityids.length) {
 	//if (lastRecordNumber>=30) { //test with 30 cities
 		tableau.dataCallback([], lastRecordNumber);
-    	return;
+		return;
 	}
 	
 	//add CHUNKSIZE to lastRecordNumber to create newlastRecordNumber which will be used to pass back to Tableau
@@ -101,10 +101,10 @@ function getTableData(lastRecordNumber) {
 	cityidsslice = cityids.slice(lastRecordNumber,newlastRecordNumber)
 	
 	//build array of urls to get from OpenWeatherMap API
-    var urls = _buildUrls(cityidsslice);
+	var urls = _buildUrls(cityidsslice);
 	
 	//get multiple JSON requests and callback to tableau when finished
-    multi_getJSON(urls,newlastRecordNumber,getResults);	
+	multi_getJSON(urls,newlastRecordNumber,getResults);	
 	
 }
 
@@ -114,7 +114,7 @@ function _buildUrls(cityids){
 	for (y=0;y<cityids.length;y++)
 	{
 		urls.push('http://api.openweathermap.org/data/2.5/forecast/daily?id=' + encodeURIComponent(cityids[y].toString()) + "&cnt=5&units=metric" +"&APPID=" + APPID);
-    }		
+	}		
 	return urls;
 }
 			
@@ -146,9 +146,9 @@ function multi_getJSON(urls,newlastRecordNumber,callback)
 					results[index] = data;
 				}
 			}).fail(function() { 
-                //call back to tableau in the event of failure
+				//call back to tableau in the event of failure
 				callback(results,newlastRecordNumber);			
-        })); 
+			})); 
 		});
 		$.when.apply($, stack).done(function() {
 		callback(results,newlastRecordNumber);		
@@ -180,25 +180,25 @@ function getResults(results,newlastRecordNumber)
 
 			tableau.log("weatherwebconnect - getTableData city=" + city.name);
 			entry = {'COUNTRY': city.country, 
-						 'CITY': city.name, 
-						 'CITY ID': city.id, 
-						 'DAYTEMP': list[x].temp.day, 
-						 'MINTEMP': list[x].temp.min, 
-						 'MAXTEMP': list[x].temp.max, 
-						 'NIGHTTEMP': list[x].temp.night, 
-						 'EVETEMP': list[x].temp.eve, 
-						 'MORNTEMP': list[x].temp.morn, 
-						 'PRESSURE': list[x].pressure, 
-						 'HUMIDITY': list[x].humidity, 
-						 'DATE': new Date(list[x].dt * 1000), 
-						 'MAIN': list[x].weather[0].main,
-						 'DESCRIPTION': list[x].weather[0].description,
-						 'ICON': list[x].weather[0].icon,
-						 'SPEED': list[x].speed, 
-						 'DEGREES': list[x].deg, 
-						 'CLOUD': list[x].clouds,
-						 'LAT': city.coord.lat, 
-						 'LON': city.coord.lon};
+						'CITY': city.name, 
+						'CITY ID': city.id, 
+						'DAYTEMP': list[x].temp.day, 
+						'MINTEMP': list[x].temp.min, 
+						'MAXTEMP': list[x].temp.max, 
+						'NIGHTTEMP': list[x].temp.night, 
+						'EVETEMP': list[x].temp.eve, 
+						'MORNTEMP': list[x].temp.morn, 
+						'PRESSURE': list[x].pressure, 
+						'HUMIDITY': list[x].humidity, 
+						'DATE': new Date(list[x].dt * 1000), 
+						'MAIN': list[x].weather[0].main,
+						'DESCRIPTION': list[x].weather[0].description,
+						'ICON': list[x].weather[0].icon,
+						'SPEED': list[x].speed, 
+						'DEGREES': list[x].deg, 
+						'CLOUD': list[x].clouds,
+						'LAT': city.coord.lat, 
+						'LON': city.coord.lon};
 			toRet.push(entry);
 			}}
 	}
@@ -206,7 +206,7 @@ function getResults(results,newlastRecordNumber)
 }
 
 $(document).ready(function () {
-    //register some input handlers
+	//register some input handlers
 	$("#inputForm").submit(function() { 
 		// This event fires when a button is clicked 
 		event.preventDefault(); 
@@ -229,46 +229,46 @@ $(document).ready(function () {
 </head>
 <body>
 
-    <!-- Header -->
-    <header id="top" class="header">
-        <div class="text-vertical-center">
-            <h1>Weather Web Data Connector</h1>
+	<!-- Header -->
+	<header id="top" class="header">
+		<div class="text-vertical-center">
+			<h1>Weather Web Data Connector</h1>
 		
 	<!-- Input Form -->
 	<form id="inputForm" action="">
 		
-		  <br>
-		  <label><input type="radio" name="dataSourceName" value="GB" checked> United Kingdom</label>
-		  <br>
-		  <label><input type="radio" name="dataSourceName" value="DE"> Germany</label>
-		  <br>
-		  <label><input type="radio" name="dataSourceName" value="FR"> France</label>
-		  <br>
-		  <label><input type="radio" name="dataSourceName" value="AU"> Australia</label>
-		  <br>
-		  <label><input type="radio" name="dataSourceName" value="US"> United States</label>
-		  <br>
-		  <label><input type="radio" name="dataSourceName" value="ALL"> Global</label>
-		  <br>
-		  <input class="btn btn-dark btn-lg" type="submit" value="Get Weather Forecast">
-		  <h3>5 Day Forecast for Top 300 Cities (by population)</h3>
+		<br>
+		<label><input type="radio" name="dataSourceName" value="GB" checked> United Kingdom</label>
+		<br>
+		<label><input type="radio" name="dataSourceName" value="DE"> Germany</label>
+		<br>
+		<label><input type="radio" name="dataSourceName" value="FR"> France</label>
+		<br>
+		<label><input type="radio" name="dataSourceName" value="AU"> Australia</label>
+		<br>
+		<label><input type="radio" name="dataSourceName" value="US"> United States</label>
+		<br>
+		<label><input type="radio" name="dataSourceName" value="ALL"> Global</label>
+		<br>
+		<input class="btn btn-dark btn-lg" type="submit" value="Get Weather Forecast">
+		<h3>5 Day Forecast for Top 300 Cities (by population)</h3>
 	</form>
-        </div>
-    </header>
+		</div>
+	</header>
 
-    <!-- About -->
-    <section id="about" class="about">
-        <div class="container">
-            <div class="row">
-                <div class="col-lg-12 text-center">
-                    <h2>Weather Web Data Connector</h2>
-                    <p class="lead">This Web Data Connector is Powered By  <a target="_blank" href="http://openweathermap.org/">OpenWeatherMap</a>.</p>
-                </div>
-            </div>
-            <!-- /.row -->
-        </div>
-        <!-- /.container -->
-    </section>
+	<!-- About -->
+	<section id="about" class="about">
+		<div class="container">
+			<div class="row">
+				<div class="col-lg-12 text-center">
+					<h2>Weather Web Data Connector</h2>
+					<p class="lead">This Web Data Connector is Powered By  <a target="_blank" href="http://openweathermap.org/">OpenWeatherMap</a>.</p>
+				</div>
+			</div>
+			<!-- /.row -->
+		</div>
+		<!-- /.container -->
+	</section>
 
 </body>
 </html>
